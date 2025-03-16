@@ -124,9 +124,9 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
   }
 
   async fetchMetadata(url) {
-    this.shadowRoot.innerHTML = 'div class="loader"></div>';
+    this.shadowRoot.innerHTML = '<div class="loader"></div>';
     try {
-      const response = await fetch('https://open-apis.hax.cloud/api/services/website/metadata?q=${url}');
+      const response = await fetch(`https://open-apis.hax.cloud/api/services/website/metadata?q=${url}`);
       const data = await response.json();
       this.title = data.data.title || '';
       this.description = data.data.description || '';
