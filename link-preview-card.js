@@ -92,8 +92,8 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
         margin-top: 8px;
       }
       .loader {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid var(--ddd-theme-primary);
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #3498db;
         border-radius: 50%;
         width: 24px;
         height: 24px;
