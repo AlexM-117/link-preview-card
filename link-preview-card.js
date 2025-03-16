@@ -20,7 +20,13 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
 
   constructor() {
     super();
+    this.attachShadow({ mode: 'open' });
     this.title = "";
+    this.description = "";
+    this.image = "";
+    this.url = "";
+
+
     this.t = this.t || {};
     this.t = {
       ...this.t,
@@ -40,6 +46,9 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     return {
       ...super.properties,
       title: { type: String },
+      description: { type: String },
+      image: { type: String },
+      url: { type: String }
     };
   }
 
@@ -57,8 +66,39 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
         margin: var(--ddd-spacing-2);
         padding: var(--ddd-spacing-4);
       }
-      h3 span {
-        font-size: var(--link-preview-card-label-font-size, var(--ddd-font-size-s));
+      .card {
+        border: 1px solid var(--ddd-theme-primary);
+        padding: 16px;
+        border-radius: 8px;
+      }
+      .card h2 {
+        margin: 0;
+        font-size: 1.2em;
+        color: var(--ddd-theme-primary);
+      }
+      .card a {
+        color: var(--ddd-theme-primary);
+        text-decoration: none;
+      }
+      .card p {
+        margin: 8px 0;
+      }
+      .card img {
+        max-width: 100%;
+        height: auto;
+        margin-top: 8px;
+      }
+      .loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--ddd-theme-primary);
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        animation: spin 2s linear infinite;
+      }
+      @keyframes spin {
+        0% {transform: rotate(0deg); }
+        100% {transform: rotate(360deg); }
       }
     `];
   }
@@ -66,10 +106,37 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
   // Lit render the HTML
   render() {
     return html`
-<div class="wrapper">
-  <h3><span>${this.t.title}:</span> ${this.title}</h3>
-  <slot></slot>
-</div>`;
+    <div class="wrapper">
+      <div class="card">
+        <h2>${this.title}</h2>
+        <a href="${this.url}">${this.url}</a>
+        <p>${this.description}</p>
+        ${this.image ? html`<img src="${this.image}" alt="Preview Image">` : ''}
+      </div>
+    </div>
+    `;
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+    if (name === 'href') {
+      this.fetchMetadata(newValue);
+    }
+  }
+
+  async fetchMetadata(url) {
+    this.shadowRoot.innerHTML = 'div class="loader"></div>';
+    try {
+      const response = await fetch('https://open-apis.hax.cloud/api/services/website/metadata?q=${url}');
+      const data = await response.json();
+      this.title = data.data.title || '';
+      this.description = data.data.description || '';
+      this.image = data.data.og.image || '';
+      this.url = data.data.og.url || url;
+      this.requestUpdate;
+    } catch (error) {
+      this.shadowRoot.innerHTML = 'No preview';
+    }
   }
 
   /**
