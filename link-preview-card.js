@@ -24,6 +24,8 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     this.description = "";
     this.image = "";
     this.url = "";
+    this.href = "";
+    this.loading = false;
 
 
     this.t = this.t || {};
@@ -47,7 +49,9 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       title: { type: String },
       description: { type: String },
       image: { type: String },
-      url: { type: String }
+      url: { type: String },
+      href: { type: String},
+      loading: { type: Boolean}
     };
   }
 
@@ -106,9 +110,10 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
   render() {
     return html`
     <div class="wrapper">
+      ${this.loading ? html`<div class="loader"></div>` : ""}
       <div class="card">
-        <h2>${this.title}</h2>
-        <a href="${this.url}">${this.url}</a>
+        <h2>${this.title || "No preview available"}</h2>
+        <a href="${this.url}" target="_blank">${this.url}</a>
         <p>${this.description}</p>
         ${this.image ? html`<img src="${this.image}" alt="Preview Image">` : ''}
       </div>
@@ -116,25 +121,31 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     `;
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    super.attributeChangedCallback(name, oldValue, newValue);
-    if (name === 'href') {
-      this.fetchMetadata(newValue);
+  updated(changedProperties) {
+    super.updated(changedProperties);
+    if (changedProperties.has("href")) {
+      this.fetchMetadata(this.href);
     }
   }
 
   async fetchMetadata(url) {
-    this.shadowRoot.innerHTML = '<div class="loader"></div>';
+    if (!url) {
+      this.loading = true;
+      this.requestUpdate();
+    }
     try {
-      const response = await fetch(`https://open-apis.hax.cloud/api/services/website/metadata?q=${url}`);
+      const response = await fetch(`https://open-apis.hax.cloud/api/services/website/metadata?q=${encodeURIComponent(url)}`);
+      if (!response.ok) throw new Error(`HTTP error. Status: ${response.status}`);
+
       const data = await response.json();
-      this.title = data.data.title || '';
-      this.description = data.data.description || '';
-      this.image = data.data.og.image || '';
+      this.title = data.data.title || "No title available";
+      this.description = data.data.description || "New description available";
+      this.image = data.data.og.image || "";
       this.url = data.data.og.url || url;
       this.requestUpdate();
     } catch (error) {
-      this.shadowRoot.innerHTML = 'No preview';
+      this.loading = true;
+      this.requestUpdate();
     }
   }
 
