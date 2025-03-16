@@ -20,7 +20,6 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
 
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
     this.title = "";
     this.description = "";
     this.image = "";
@@ -133,7 +132,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       this.description = data.data.description || '';
       this.image = data.data.og.image || '';
       this.url = data.data.og.url || url;
-      this.requestUpdate;
+      this.requestUpdate();
     } catch (error) {
       this.shadowRoot.innerHTML = 'No preview';
     }
