@@ -76,7 +76,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       }
       .card h2 {
         margin: 0;
-        font-size: 1.2em;
+        font-size: var(--ddd-font-16);
         color: var(--ddd-theme-primary);
       }
       .card a {
@@ -140,8 +140,8 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       const data = await response.json();
       this.title = data.data.title || "No title available";
       this.description = data.data.description || "New description available";
-      this.image = data.data.og.image || "";
-      this.url = data.data.og.url || url;
+      this.image = data.data["og:image"] || "";
+      this.url = data.data["og:url"] || url;
       this.requestUpdate();
     } catch (error) {
       this.loading = true;
