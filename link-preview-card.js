@@ -51,7 +51,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       image: { type: String },
       url: { type: String },
       href: { type: String},
-      loading: { type: Boolean}
+      loading: { type: Boolean, reflect: true, attribute: "loading-state"} //< Change/look into from code repo
     };
   }
 
