@@ -123,18 +123,19 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
 
   updated(changedProperties) {
     super.updated(changedProperties);
-    if (changedProperties.has("href")) {
+    if (changedProperties.has("href") && this.href) {
       this.fetchMetadata(this.href);
     }
   }
 
+  //Update code below from code repo V
   async fetchMetadata(url) {
     if (!url) {
       this.loading = true;
       this.requestUpdate();
     }
     try {
-      const response = await fetch(`https://open-apis.hax.cloud/api/services/website/metadata?q=${encodeURIComponent(url)}`);
+      const response = await fetch(`https://open-apis.hax.cloud/api/services/website/metadata?q=${url}`);
       if (!response.ok) throw new Error(`HTTP error. Status: ${response.status}`);
 
       const data = await response.json();
