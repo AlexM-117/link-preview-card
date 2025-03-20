@@ -141,7 +141,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       const data = await response.json();
       this.title = data.data["og:title"] || data.data.title || "No title available";
       this.description = data.data["og:description"] || data.data.description || "New description available";
-      this.image = data.data["og:image"] || data.data.logo || "";
+      this.image = data.data.logo || data.data["og:image"] || "";
       this.url = data.data["og:url"] || url;
       this.requestUpdate();
     } catch (error) {
