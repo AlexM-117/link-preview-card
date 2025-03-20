@@ -139,9 +139,9 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       if (!response.ok) throw new Error(`HTTP error. Status: ${response.status}`);
 
       const data = await response.json();
-      this.title = data.data.title || data.data["og:title"] || "No title available";
-      this.description = data.data["og:description"] || "New description available";
-      this.image = data.data["og:image"] || "";
+      this.title = data.data["og:title"] || data.data.title || "No title available";
+      this.description = data.data["og:description"] || data.data.description || "New description available";
+      this.image = data.data["og:image"] || data.data.logo || "";
       this.url = data.data["og:url"] || url;
       this.requestUpdate();
     } catch (error) {
