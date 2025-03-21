@@ -124,12 +124,12 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
   updated(changedProperties) {
     super.updated(changedProperties);
     if (changedProperties.has("href") && this.href) {
-      this.fetchMetadata(this.href);
+      this.fetchData(this.href);
     }
   }
 
   //Update code below from code repo V
-  async fetchMetadata(url) {
+  async fetchData(url) {
     if (!url) {
       this.loading = true;
       this.requestUpdate();
