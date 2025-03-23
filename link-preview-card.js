@@ -151,7 +151,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       const data = await response.json();
 
       this.title = data.data["og:title"] || data.data["title"] || "No title available";
-      this.description = data.data["og:description"] || data.data["description"] || "No description available";
+      this.description = this.truncateText(data.data["og:description"] || data.data["description"] || "No description available", 250);
       this.image = data.data["og:image"] || data.data["image"] || "";
       this.link = data.data["og:url"] || data.data["url"] || link;
       this.themeColor = data.data?.["theme-color"]?.trim() || this.getThemeColor(link);
@@ -161,6 +161,11 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     } finally {
       this.loadingState = false;
     }
+  }
+
+  truncateText(text, maxLength) {
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+
   }
 
   getThemeColor(link) {
