@@ -112,7 +112,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       ${this.loadingState ? html`<div class="loader"></div>` : ""}
       <div class="card">
         <h2>${this.title || "No preview available"}</h2>
-        <a href="${this.link}" target="_blank">${this.linkl}</a>
+        <a href="${this.link}" target="_blank">${this.link}</a>
         <p>${this.description}</p>
         ${this.image ? html`<img src="${this.image}" alt="Preview Image">` : ''}
       </div>
