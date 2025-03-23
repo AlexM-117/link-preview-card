@@ -140,7 +140,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       this.title = data.data["og:title"] || data.data["title"] || "No title available";
       this.description = data.data["og:description"] || data.data["description"] || "No description available";
       this.image = data.data["og:image"] || data.data["image"] || "";
-      this.link = data.data["og:url"] || link;
+      this.link = data.data["og:url"] || data.data["url"] || link;
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
