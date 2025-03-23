@@ -67,17 +67,19 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
         background-color: var(--ddd-theme-accent);
         font-family: var(--ddd-font-navigation);
       }
-      :host(:hover) {
-        transform: translateY(-5px);
-      }
       .wrapper {
         margin: var(--ddd-spacing-2);
         padding: var(--ddd-spacing-4);
       }
       .card {
         border: 1px solid var(--ddd-theme-primary);
+        border-left: 8px solid transparent;
         padding: 16px;
         border-radius: 8px;
+        transition: border-left-color 0.3s ease-in-out;
+      }
+      :host(:hover) .card {
+        border-left-color: var(--theme-color, var(--ddd-theme-primary));
       }
       .card h2 {
         margin: var(--ddd-spacing-0);
@@ -121,7 +123,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     return html`
     <div class="wrapper">
       ${this.loadingState ? html`<div class="loader"></div>` : ""}
-      <div class="card">
+      <div class="card" style="--theme-color:${this.themeColor}">
         <a href="${this.link}" target="_blank">${this.link}</a>
         <h2>${this.title || "No preview available"}</h2>
         <p>${this.description}</p>
@@ -152,7 +154,8 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       this.description = data.data["og:description"] || data.data["description"] || "No description available";
       this.image = data.data["og:image"] || data.data["image"] || "";
       this.link = data.data["og:url"] || data.data["url"] || link;
-      this.themeColor = data.data["theme-color"] || this.defaultTheme();
+      this.themeColor = data.data?.["theme-color"]?.trim() || this.getThemeColor(link);
+
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -160,12 +163,18 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     }
   }
 
-  defaultTheme() {
-    if (this.href.includes("psu.edu")) {
-      return "var(--ddd-primary-2)";
-    } else {
-      return "var(--ddd-primary-15)";
+  getThemeColor(link) {
+    try {
+      const hostname = new URL(link).hostname;
+      if (hostname.endsWith("psu.edu")) {
+        return "var(--ddd-primary-2)";
+      }
+    } catch (error) {
+      console.warn("Invalid URL format:", link);
     }
+
+    const randomNum = Math.floor(Math.random() * 26);
+    return `var(--ddd-primary-${randomNum})`;
   }
 
   /**
