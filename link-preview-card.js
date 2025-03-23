@@ -75,7 +75,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
         border-radius: 8px;
       }
       .card h2 {
-        margin: 0;
+        margin: var(--ddd-spacing-0);
         font-size: var(--ddd-font-16);
         color: var(--ddd-theme-primary);
       }
