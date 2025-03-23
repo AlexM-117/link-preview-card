@@ -23,9 +23,9 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     this.title = "";
     this.description = "";
     this.image = "";
-    this.url = "";
+    this.link = "";
     this.href = "";
-    this.loading = false;
+    this.loadingState = false;
 
 
     this.t = this.t || {};
@@ -49,9 +49,9 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       title: { type: String },
       description: { type: String },
       image: { type: String },
-      url: { type: String },
+      link: { type: String },
       href: { type: String},
-      loading: { type: Boolean, reflect: true, attribute: "loading-state"} //< Change/look into from code repo
+      loadingState: { type: Boolean, reflect: true, attribute: "loading-state"}
     };
   }
 
@@ -87,9 +87,8 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
         margin: 8px 0;
       }
       .card img {
-        max-width: 100%;
-        height: auto;
-        margin-top: 8px;
+        max-width: 512px;
+        max-height: 256px;
       }
       .loader {
         border: 16px solid #f3f3f3;
@@ -110,10 +109,10 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
   render() {
     return html`
     <div class="wrapper">
-      ${this.loading ? html`<div class="loader"></div>` : ""}
+      ${this.loadingState ? html`<div class="loader"></div>` : ""}
       <div class="card">
         <h2>${this.title || "No preview available"}</h2>
-        <a href="${this.url}" target="_blank">${this.url}</a>
+        <a href="${this.link}" target="_blank">${this.linkl}</a>
         <p>${this.description}</p>
         ${this.image ? html`<img src="${this.image}" alt="Preview Image">` : ''}
       </div>
@@ -128,25 +127,25 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     }
   }
 
-  //Update code below from code repo V
   async fetchData(url) {
     if (!url) {
-      this.loading = true;
-      this.requestUpdate();
+      this.loadingState = true;
+      const url = `https://open-apis.hax.cloud/api/services/website/metadata?q=${link}`;
     }
     try {
-      const response = await fetch(`https://open-apis.hax.cloud/api/services/website/metadata?q=${url}`);
-      if (!response.ok) throw new Error(`HTTP error. Status: ${response.status}`);
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Status: ${response.status}`);
 
       const data = await response.json();
-      this.title = data.data["og:title"] || data.data.title || "No title available";
-      this.description = data.data["og:description"] || data.data.description || "New description available";
-      this.image = data.data["og:image"] || "";
-      this.url = data.data["og:url"] || url;
-      this.requestUpdate();
+
+      this.title = data.data["og:title"] || data.data["title"] || "No title available";
+      this.description = data.data["og:description"] || data.data["description"] || "No description available";
+      this.image = data.data["og:image"] || data.data["image"] || "";
+      this.link = data.data["og:url"] || link;
     } catch (error) {
-      this.loading = true;
-      this.requestUpdate();
+      this.loadingState = true;
+    } finally {
+      this.loadingState = false;
     }
   }
 
