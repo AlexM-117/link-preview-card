@@ -158,6 +158,11 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
 
     } catch (error) {
       console.error("Error fetching data:", error);
+      this.title = "No preview available";
+      this.description = "";
+      this.image = "";
+      this.link = "";
+      this.themeColor = this.getThemeColor();
     } finally {
       this.loadingState = false;
     }
