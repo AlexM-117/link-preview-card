@@ -127,11 +127,10 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     }
   }
 
-  async fetchData(url) {
-    if (!url) {
-      this.loadingState = true;
-      const url = `https://open-apis.hax.cloud/api/services/website/metadata?q=${link}`;
-    }
+  async fetchData(link) {
+    this.loadingState = true;
+    const url = `https://open-apis.hax.cloud/api/services/website/metadata?q=${link}`;
+  
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error(`Status: ${response.status}`);
@@ -143,7 +142,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       this.image = data.data["og:image"] || data.data["image"] || "";
       this.link = data.data["og:url"] || link;
     } catch (error) {
-      this.loadingState = true;
+      console.error("Error fetching data:", error);
     } finally {
       this.loadingState = false;
     }
