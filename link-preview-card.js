@@ -26,6 +26,7 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
     this.link = "";
     this.href = "";
     this.loadingState = false;
+    this.themeColor = "";
 
 
     this.t = this.t || {};
@@ -51,7 +52,8 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       image: { type: String },
       link: { type: String },
       href: { type: String},
-      loadingState: { type: Boolean, reflect: true, attribute: "loading-state"}
+      loadingState: { type: Boolean, reflect: true, attribute: "loading-state"},
+      themeColor: { type: String}
     };
   }
 
@@ -64,6 +66,9 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
         color: var(--ddd-theme-primary);
         background-color: var(--ddd-theme-accent);
         font-family: var(--ddd-font-navigation);
+      }
+      :host(:hover) {
+        transform: translateY(-5px);
       }
       .wrapper {
         margin: var(--ddd-spacing-2);
@@ -101,6 +106,12 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       @keyframes spin {
         0% {transform: rotate(0deg); }
         100% {transform: rotate(360deg); }
+      }
+      @media (max-width: 600px) {
+        :host {
+          max-width: 100%;
+          padding: var(--ddd-spacing-3);
+        }
       }
     `];
   }
@@ -141,10 +152,19 @@ export class LinkPreviewCard extends DDDSuper(I18NMixin(LitElement)) {
       this.description = data.data["og:description"] || data.data["description"] || "No description available";
       this.image = data.data["og:image"] || data.data["image"] || "";
       this.link = data.data["og:url"] || data.data["url"] || link;
+      this.themeColor = data.data["theme-color"] || this.defaultTheme();
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       this.loadingState = false;
+    }
+  }
+
+  defaultTheme() {
+    if (this.href.includes("psu.edu")) {
+      return "var(--ddd-primary-2)";
+    } else {
+      return "var(--ddd-primary-15)";
     }
   }
 
